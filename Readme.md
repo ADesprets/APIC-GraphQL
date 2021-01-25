@@ -10,7 +10,7 @@ https://ec.yourlearning.ibm.com/w3/series/10101939?layout=grid
 
 # Introduction: why GraphQL?
 At its simplest, GraphQL is about asking for specific fields on objects.
-Interest is growing significantly in 2109 and  2020
+Interest is growing significantly in 2109 and 2020
 
 
 Problems solved by GraphQL API
@@ -31,10 +31,12 @@ Create  queries for the data you need to integrate with GitHub https://docs.gith
 Available in many languages.
 
 ## Terminology and concepts
-A query language And a runtime to fulfill queries
+A query language and a runtime to fulfill queries
 ## REST versus GraphQL
 Only one URL
 Use POST (or GET with JSON **like** payload as parameter)
+The message sent to the GraphQL server, the request, is JSON. The response is JSON.
+The query define inside the JSON payload in the request is not JSON, but JSON like.
 
 There is a content-type called application/graphQL
 
@@ -65,7 +67,6 @@ Notions of variables
 {"a":"b"}
 Notions of OperationName
 operationName as a query parameters or inside the Query
-
 
 **Introspections queries** get data types and operations a GraphQL server offers.
 ![Introspection](./images/introspection.png)
@@ -106,6 +107,22 @@ query {
 }
 ```
 
+Response
+```
+{
+  "data": {
+    "repository": {
+      "name": "graphql-js",
+      "description": "A reference implementation of GraphQL for JavaScript"
+    },
+    "viewer": {
+      "login": "ADesprets"
+    }
+  }
+}
+```
+
+
 Sample mutation
 Create an account and return me the id
 Request:
@@ -141,15 +158,18 @@ subscription {
 ```
 
 
-
-
 # Simple Test
-## Create a GraphQL API
+Goal is to implement the following:
+![Overall design](./images/design.png)
+
+From a use case perspective, implement a GraphQL API that provide information on continents and countries similar to the API here with the following schema:
+![Data design](./images/data-design.png)
 
 
+## Create a lb4 API
+See D:\CurrentProjects\APIMgt\Technical\lb4\README.md
 
-
-
+## Create a GraphQL API in API Connect
 
 
 Wizard Add API
@@ -183,14 +203,13 @@ Under-estimating increase risks by not limiting dangerous transactions
 ![Assembly panel GraphQL](./images/assembly-pannel.png)assembly-panel
 
 In the test panel, for the GraphiQL editor
-We find the history, the request , the response and the documentations/schemas information
+We find the history, the request, the response and the documentations/schemas information
 
 In Request: type ahead, real time error highlighting
 
 In the trace part, we can see all the debug information
 
 Do not need the introspection, because it is included in the GraphiQL editor.
-
 
 The parse action is a standard DataPower action.
 It has now a GraphQL document type
@@ -249,6 +268,30 @@ Another sample with filter (https://countries.trevorblades.com/)
     }
   }
 }
+```
+
+```
+{
+  continents (filter: {code: {regex: "AF|EU"}}) {
+    name
+    code
+  }
+}
+```
+
+```
+{
+  countries (filter: {currency: {eq: "EUR"}}){
+    name
+    currency
+  }
+}
+```
+
+
+Sample get countries using euro as cxurrency
+```
+curl "https://countries.trevorblades.com/" -H "Accept: */*" -H "content-type: application/json" --data-raw "{""operationName"":null,""variables"":{},""query"":""{\n  countries(filter: {currency: {eq: \\""EUR\\""}}) {\n    name\n  }\n}\n""}"
 ```
 
 ![Testing GraphQL](./images/testing-graphql.png)
@@ -330,6 +373,16 @@ curl -k -H "Accept: application/json" -H "Content-Type: application/json" -H "X-
   }
 }
 ```
+
+Working: + binary for the invoke
+```
+var queryS="{  countries(filter: {currency: {eq: \"EUR\"}}) { name }}";
+var msga={"variables": null};
+msga.query=queryS;
+context.message.body.write(msga);
+```
+
+
 # Introspect the GraphiQL schema
 
 # Securing GraphQL queries
@@ -408,8 +461,6 @@ In the future APIC Gateway may try to do something
 
 # Understanding API Event with GraphQL information
 
-
-
 { __schema { queryType { name } } }
 
 curl -k -v "https://graphql-test-server.us-east.cf.appdomain.cloud/accounts/graphql?query=%7B%20__schema%20%7B%20queryType%20%7B%20name%20%7D%20%7D%20%7D"
@@ -424,9 +475,12 @@ curl 'https://countries.trevorblades.com/' -H 'Accept-Encoding: gzip, deflate, b
 
 ![Test too many request](./images/test-exceeded.png)
 
-# Creating a GraphQL Server using loopback
+# Creating a GraphQL Server using loopback from A REST API
 For more information see https://loopback.io/doc/en/lb4/GraphQL.html
-We are going to create an API to query continents, and countries
+
+https://loopback.io/doc/en/lb4/Using-openapi-to-graphql.html
+
+We are going to create an API to query continents, and countries (please see the lb4 sample documentation)
 
 Loopback acts as an integrator of the various data sources.
 
