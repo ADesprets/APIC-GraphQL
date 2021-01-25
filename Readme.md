@@ -95,6 +95,8 @@ Support nested queries do not need a join like in SQL.
 GitHub has two API V3 REST based API, V4 GraphQL API (195 kB versus 2.2 kB for example/ 24 requests versus 1 request)
 https://developer.github.com/v4/explorer
 
+Request
+Get the name of the repository and the user login to this repository
 ```
 query {
   repository(owner: "graphql", name: "graphql-js"){
@@ -125,7 +127,7 @@ Response
 
 Sample mutation
 Create an account and return me the id
-Request:
+Request
 ```
 mutation {
   addAccount(input: {id: 123, name: {first: "John", last: "Doo"}}) {
@@ -146,6 +148,7 @@ Response
 
 Sample subscription (Not in V10.0.0.0)
 Give me the name and date of creation of all new repository created
+Request
 ```
 subscription {
   newRepository {
