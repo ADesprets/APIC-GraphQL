@@ -7,6 +7,10 @@ GraphQL: The client is King but the GraphQL server is Prince
 
 https://ec.yourlearning.ibm.com/w3/series/10101939?layout=grid
 
+## Federation
+https://www.apollographql.com/docs/federation/
+Deutsche Bahn  https://bahnql.herokuapp.com/graphql
+
 
 # Introduction: why GraphQL?
 At its simplest, GraphQL is about asking for specific fields on objects.
@@ -147,7 +151,7 @@ Response
 ```
 
 Sample subscription (Not in V10.0.0.0)
-Give me the name and date of creation of all new repository created
+Give me the name and date of creation of all the new repositories created from now
 Request
 ```
 subscription {
@@ -292,9 +296,9 @@ Another sample with filter (https://countries.trevorblades.com/)
 ```
 
 
-Sample get countries using euro as cxurrency
+Sample get countries using euro as currency
 ```
-curl "https://countries.trevorblades.com/" -H "Accept: */*" -H "content-type: application/json" --data-raw "{""operationName"":null,""variables"":{},""query"":""{\n  countries(filter: {currency: {eq: \\""EUR\\""}}) {\n    name\n  }\n}\n""}"
+curl "https://countries.trevorblades.com/" -H "Accept: */*" -H "content-type: application/json" --data-raw "{""operationName"":null,""variables"":{},""query"":""{\n  countries(filter: {currency: {regex: \\""EUR\\""}}) {\n    name\n  }\n}\n""}"
 ```
 
 ![Testing GraphQL](./images/testing-graphql.png)
@@ -391,7 +395,6 @@ context.message.body.write(msga);
 # Securing GraphQL queries
 
 Edit the schema for protection
-
 
 ## Authentication and quotas
 Traditional API Security
